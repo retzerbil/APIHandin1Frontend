@@ -80,11 +80,13 @@ closeDialog.addEventListener("click", async (ev) => {
 
     if (editingPlayer != null) {
         o.id = editingPlayer.id;
-        url = "http://localhost:3000/createPlayer" + o.id
+        url = "http://localhost:3000/updatePlayer/" +o.id
         method = "PUT"
+        console.log("Updated");
     } else {
         url = "http://localhost:3000/createPlayer"
         method = "POST"
+        console.log("Created");
     }
     let response = await fetch(url, {
         headers: {
@@ -145,7 +147,7 @@ const updateTable = function () {
             jersey.value = players[i].jersey
             position.value = players[i].position
             team.value = players[i].team
-            editingPlayer = null
+            editingPlayer = players[i]
             MicroModal.show('modal-1');
 
         })
