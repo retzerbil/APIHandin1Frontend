@@ -98,11 +98,14 @@ closeDialog.addEventListener("click", async (ev) => {
     })
 
     window.location.reload();
-    let json = await response.json()
 
-    players = await fetchPlayers()
-    updateTable()
-    MicroModal.close('modal-1');
+    
+    //MAC MASS COMMENT COMMAND + K + C
+    // let json = await response.json()
+
+    // players = await fetchPlayers()
+    // updateTable()
+    // MicroModal.close('modal-1');
 })
 
 btnAdd.addEventListener("click", () => {
