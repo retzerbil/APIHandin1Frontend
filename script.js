@@ -138,8 +138,12 @@ const updateTable = function () {
 
         let td = document.createElement("td")
         let btn = document.createElement("button")
+        let btnDelete = document.createElement("button")
+        btnDelete.textContent = "DELETE"
         btn.textContent = "EDIT"
         btn.dataset.stefansplayerid = players[i].id
+
+        td.appendChild(btnDelete)
         td.appendChild(btn)
         tr.appendChild(td)
 
@@ -152,6 +156,16 @@ const updateTable = function () {
             team.value = players[i].team
             editingPlayer = players[i]
             MicroModal.show('modal-1');
+
+        })
+
+        btnDelete.addEventListener("click", async function () {
+          if(confirm("Are you sure you want to delete " + players[i].name + "?")){
+             await fetch("http://localhost:3000/deletePlayer/" + players[i].id, {
+                method: "DELETE"
+            })
+            window.location.reload();
+          }
 
         })
 
