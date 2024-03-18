@@ -4,7 +4,7 @@ const allPlayersTBody = document.querySelector("#allPlayers tbody")
 const searchPlayer = document.getElementById("searchPlayer")
 const btnAdd = document.getElementById("btnAdd")
 const closeDialog = document.getElementById("closeDialog")
-
+let currentQ = ""
 
 function Player(id, name, jersey, team, position) {
     this.id = id
@@ -20,22 +20,14 @@ function Player(id, name, jersey, team, position) {
     }
 }
 
-async function fetchPlayers() {
-    return await ((await fetch('http://localhost:3000/getPlayers')).json())
-}
 
-let players = await fetchPlayers()
+
 
 searchPlayer.addEventListener("input", function () {
-    const searchFor = searchPlayer.value.toLowerCase()
-    for (let i = 0; i < players.length; i++) { // TODO add a matches function
-        if (players[i].matches(searchFor)) {
-            players[i].visible = true
-        } else {
-            players[i].visible = false
-        }
-    }
-    updateTable()
+    setTimeout(() => {
+        currentQ = searchPlayer.value.toLowerCase()
+        updateTable()      
+    }, 1000);
 
 });
 
@@ -118,8 +110,13 @@ btnAdd.addEventListener("click", () => {
 
 })
 
+async function fetchPlayers() {
+    return await ((await fetch('http://localhost:3000/getPlayers?&q='+currentQ)).json())
+}
+const updateTable = async function () {
 
-const updateTable = function () {
+    
+    let players = await fetchPlayers()
     // while(allPlayersTBody.firstChild)
     //     allPlayersTBody.firstChild.remove()
     allPlayersTBody.innerHTML = ""
