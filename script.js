@@ -5,6 +5,17 @@ const searchPlayer = document.getElementById("searchPlayer")
 const btnAdd = document.getElementById("btnAdd")
 const closeDialog = document.getElementById("closeDialog")
 let currentQ = ""
+let currentSortCol = "name"
+let currentSortOrder = ""
+const sortArrows = document.getElementsByClassName("bi");
+
+Object.values(sortArrows).forEach(link => {
+    link.addEventListener("click", () => {
+        currentSortCol = link.dataset.sortcol
+        currentSortOrder = link.dataset.sortorder
+        updateTable()
+    })
+})
 
 function Player(id, name, jersey, team, position) {
     this.id = id
@@ -21,12 +32,10 @@ function Player(id, name, jersey, team, position) {
 }
 
 
-
-
 searchPlayer.addEventListener("input", function () {
     setTimeout(() => {
         currentQ = searchPlayer.value.toLowerCase()
-        updateTable()      
+        updateTable()
     }, 1000);
 
 });
@@ -72,7 +81,7 @@ closeDialog.addEventListener("click", async (ev) => {
 
     if (editingPlayer != null) {
         o.id = editingPlayer.id;
-        url = "http://localhost:3000/updatePlayer/" +o.id
+        url = "http://localhost:3000/updatePlayer/" + o.id
         method = "PUT"
         console.log("Updated");
     } else {
@@ -91,7 +100,7 @@ closeDialog.addEventListener("click", async (ev) => {
 
     window.location.reload();
 
-    
+
     //MAC MASS COMMENT COMMAND + K + C
     // let json = await response.json()
 
@@ -111,11 +120,10 @@ btnAdd.addEventListener("click", () => {
 })
 
 async function fetchPlayers() {
-    return await ((await fetch('http://localhost:3000/getPlayers?&q='+currentQ)).json())
+    return await ((await fetch('http://localhost:3000/getPlayers?' + '&sortCol=' + currentSortCol +'&sortOrder=' + currentSortOrder + '&q=' + currentQ)).json())
 }
 const updateTable = async function () {
 
-    
     let players = await fetchPlayers()
     // while(allPlayersTBody.firstChild)
     //     allPlayersTBody.firstChild.remove()
@@ -157,12 +165,12 @@ const updateTable = async function () {
         })
 
         btnDelete.addEventListener("click", async function () {
-          if(confirm("Are you sure you want to delete " + players[i].name + "?")){
-             await fetch("http://localhost:3000/deletePlayer/" + players[i].id, {
-                method: "DELETE"
-            })
-            window.location.reload();
-          }
+            if (confirm("Are you sure you want to delete " + players[i].name + "?")) {
+                await fetch("http://localhost:3000/deletePlayer/" + players[i].id, {
+                    method: "DELETE"
+                })
+                window.location.reload();
+            }
 
         })
 
