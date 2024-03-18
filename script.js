@@ -4,9 +4,12 @@ const allPlayersTBody = document.querySelector("#allPlayers tbody")
 const searchPlayer = document.getElementById("searchPlayer")
 const btnAdd = document.getElementById("btnAdd")
 const closeDialog = document.getElementById("closeDialog")
+const pager = document.getElementById('pager')
 let currentQ = ""
 let currentSortCol = "name"
 let currentSortOrder = ""
+let currentPageNo = 1
+let currentPageSize = 5
 const sortArrows = document.getElementsByClassName("bi");
 
 Object.values(sortArrows).forEach(link => {
@@ -120,7 +123,14 @@ btnAdd.addEventListener("click", () => {
 })
 
 async function fetchPlayers() {
-    return await ((await fetch('http://localhost:3000/getPlayers?' + '&sortCol=' + currentSortCol +'&sortOrder=' + currentSortOrder + '&q=' + currentQ)).json())
+    let offset = (currentPageNo - 1) * currentPageSize
+    return await ((await fetch('http://localhost:3000/getPlayers?' 
+    + '&sortCol=' + currentSortCol 
+    + '&sortOrder=' + currentSortOrder 
+    + '&q=' + currentQ  
+    + "&limit=" + currentPageSize 
+    + "&offset=" + offset
+    )).json())
 }
 const updateTable = async function () {
 
@@ -190,7 +200,28 @@ const updateTable = async function () {
     // createElement
 }
 
+function createPager(count, pageNo, currentPageSize) {
+    pager.innerHTML = ""
+    let totalPages = Math.ceil(count / currentPageSize)
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li')
+        li.classList.add("page-item")
+        if (i == pageNo) {
+            li.classList.add("active")
+        }
+        const a = document.createElement('a')
+        a.href = "#"
+        a.innerText = i
+        a.classList.add("page-link")
+        li.appendChild(a)
+        a.addEventListener("click", () => {
 
+            currentPageNo = i
+            updateTable()
+        })
+        pager.appendChild(li)
+    }
+}
 
 
 updateTable()
