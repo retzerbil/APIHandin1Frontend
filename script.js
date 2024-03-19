@@ -121,9 +121,9 @@ btnAdd.addEventListener("click", () => {
     MicroModal.show('modal-1');
 
 })
-
+let offset = (currentPageNo - 1) * currentPageSize
 async function fetchPlayers() {
-    let offset = (currentPageNo - 1) * currentPageSize
+   
     return await ((await fetch('http://localhost:3000/getPlayers?' 
     + '&sortCol=' + currentSortCol 
     + '&sortOrder=' + currentSortOrder 
@@ -132,13 +132,38 @@ async function fetchPlayers() {
     + "&offset=" + offset
     )).json())
 }
-const updateTable = async function () {
 
+function createPager(count, pageNo, currentPageSize) {
+    pager.innerHTML = ""
+    let totalPages = Math.ceil(count / currentPageSize)
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li')
+        li.classList.add("page-item")
+        if (i == pageNo) {
+            li.classList.add("active")
+        }
+        const a = document.createElement('a')
+        a.href = "#"
+        a.innerText = i
+        a.classList.add("page-link")
+        li.appendChild(a)
+        a.addEventListener("click", () => {
+
+            currentPageNo = i
+            updateTable()
+        })
+        //to fix: fetch only fetches 5 players, so there is only one page.
+        console.log("appending list to pager");
+        pager.appendChild(li)
+    }
+}
+
+const updateTable = async function () {
     let players = await fetchPlayers()
+    createPager(players.length, currentPageNo, currentPageSize)
     // while(allPlayersTBody.firstChild)
     //     allPlayersTBody.firstChild.remove()
     allPlayersTBody.innerHTML = ""
-
     // först ta bort alla children
     for (let i = 0; i < players.length; i++) { // hrmmm you do foreach if you'd like, much nicer! 
         if (players[i].visible == false) {
@@ -161,6 +186,7 @@ const updateTable = async function () {
         td.appendChild(btnDelete)
         td.appendChild(btn)
         tr.appendChild(td)
+
 
 
 
@@ -187,6 +213,7 @@ const updateTable = async function () {
 
         allPlayersTBody.appendChild(tr)
     }
+    
 
     // innerHTML och backticks `
     // Problem - aldrig bra att bygga strängar som innehåller/kan innehålla html
@@ -200,28 +227,7 @@ const updateTable = async function () {
     // createElement
 }
 
-function createPager(count, pageNo, currentPageSize) {
-    pager.innerHTML = ""
-    let totalPages = Math.ceil(count / currentPageSize)
-    for (let i = 1; i <= totalPages; i++) {
-        const li = document.createElement('li')
-        li.classList.add("page-item")
-        if (i == pageNo) {
-            li.classList.add("active")
-        }
-        const a = document.createElement('a')
-        a.href = "#"
-        a.innerText = i
-        a.classList.add("page-link")
-        li.appendChild(a)
-        a.addEventListener("click", () => {
 
-            currentPageNo = i
-            updateTable()
-        })
-        pager.appendChild(li)
-    }
-}
 
 
 updateTable()
