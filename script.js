@@ -73,7 +73,6 @@ closeDialog.addEventListener("click", async (ev) => {
     ev.preventDefault()
     let url = ""
     let method = ""
-    console.log(url)
     var o = {
         "name": playerName.value,
         "jersey": jersey.value,
@@ -85,11 +84,9 @@ closeDialog.addEventListener("click", async (ev) => {
         o.id = editingPlayer.id;
         url = "http://localhost:3000/updatePlayer/" + o.id
         method = "PUT"
-        console.log("Updated");
     } else {
         url = "http://localhost:3000/createPlayer"
         method = "POST"
-        console.log("Created");
     }
     let response = await fetch(url, {
         headers: {
@@ -135,7 +132,6 @@ async function fetchPlayers() {
 function createPager(count, pageNo, currentPageSize) {
     pager.innerHTML = ""
     let totalPages = Math.ceil(count / currentPageSize)
-    console.log(totalPages);
     for (let i = 1; i <= totalPages; i++) {
         const li = document.createElement('li')
         li.classList.add("page-item")
@@ -152,21 +148,18 @@ function createPager(count, pageNo, currentPageSize) {
             currentPageNo = i
             updateTable()
         })
-        console.log("appending list to pager");
         pager.appendChild(li)
     }
 }
 
 const updateTable = async function () {
     let data = await fetchPlayers()
-    console.log(data);
     createPager(data.count, currentPageNo, currentPageSize)
     // while(allPlayersTBody.firstChild)
     //     allPlayersTBody.firstChild.remove()
     allPlayersTBody.innerHTML = ""
     // först ta bort alla children
     for (let i = 0; i < currentPageSize; i++) { // hrmmm you do foreach if you'd like, much nicer! 
-        console.log(i);
         let tr = document.createElement("tr")
 
         tr.appendChild(createTableTdOrTh("th", data.rows[i].name))
