@@ -3,6 +3,7 @@ const searchPlayer = document.getElementById("searchPlayer")
 const btnAdd = document.getElementById("btnAdd")
 const closeDialog = document.getElementById("closeDialog")
 const pager = document.getElementById('pager')
+const validator = require('validator');
 let currentQ = ""
 let currentSortCol = "name"
 let currentSortOrder = ""
@@ -55,18 +56,6 @@ const jersey = document.getElementById("jersey")
 const position = document.getElementById("position")
 
 let editingPlayer = null
-
-const onClickPlayer = function (event) {
-    const htmlElementetSomViHarKlickatPa = event.target
-    const player = players.find(p => p.id === htmlElementetSomViHarKlickatPa.dataset.stefansplayerid)
-    playerName.value = player.name
-    jersey.value = player.jersey
-    position.value = player.position
-    editingPlayer = player
-
-    MicroModal.show('modal-1');
-
-}
 
 closeDialog.addEventListener("click", async (ev) => {
     ev.preventDefault()
