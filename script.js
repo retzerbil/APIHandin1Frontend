@@ -9,7 +9,7 @@ let currentQ = ""
 let currentSortCol = "name"
 let currentSortOrder = ""
 let currentPageNo = 1
-let currentPageSize = 5
+let currentPageSize = 20
 const sortArrows = document.getElementsByClassName("bi");
 
 Object.values(sortArrows).forEach(link => {
@@ -59,7 +59,6 @@ let editingPlayer = null
 
 const onClickPlayer = function (event) {
     const htmlElementetSomViHarKlickatPa = event.target
-    console.log(htmlElementetSomViHarKlickatPa.dataset.stefansplayerid)
     const player = players.find(p => p.id === htmlElementetSomViHarKlickatPa.dataset.stefansplayerid)
     playerName.value = player.name
     jersey.value = player.jersey
@@ -124,7 +123,7 @@ btnAdd.addEventListener("click", () => {
 let offset = (currentPageNo - 1) * currentPageSize
 async function fetchPlayers() {
    
-    return await ((await fetch('http://localhost:3000/getPlayers?' 
+    return ((await fetch('http://localhost:3000/getPlayers?' 
     + '&sortCol=' + currentSortCol 
     + '&sortOrder=' + currentSortOrder 
     + '&q=' + currentQ  
@@ -136,6 +135,7 @@ async function fetchPlayers() {
 function createPager(count, pageNo, currentPageSize) {
     pager.innerHTML = ""
     let totalPages = Math.ceil(count / currentPageSize)
+    console.log(totalPages);
     for (let i = 1; i <= totalPages; i++) {
         const li = document.createElement('li')
         li.classList.add("page-item")
@@ -152,36 +152,34 @@ function createPager(count, pageNo, currentPageSize) {
             currentPageNo = i
             updateTable()
         })
-        //to fix: fetch only fetches 5 players, so there is only one page.
         console.log("appending list to pager");
         pager.appendChild(li)
     }
 }
 
 const updateTable = async function () {
-    let players = await fetchPlayers()
-    createPager(players.length, currentPageNo, currentPageSize)
+    let data = await fetchPlayers()
+    console.log(data);
+    createPager(data.count, currentPageNo, currentPageSize)
     // while(allPlayersTBody.firstChild)
     //     allPlayersTBody.firstChild.remove()
     allPlayersTBody.innerHTML = ""
     // först ta bort alla children
-    for (let i = 0; i < players.length; i++) { // hrmmm you do foreach if you'd like, much nicer! 
-        if (players[i].visible == false) {
-            continue
-        }
+    for (let i = 0; i < currentPageSize; i++) { // hrmmm you do foreach if you'd like, much nicer! 
+        console.log(i);
         let tr = document.createElement("tr")
 
-        tr.appendChild(createTableTdOrTh("th", players[i].name))
-        tr.appendChild(createTableTdOrTh("td", players[i].jersey))
-        tr.appendChild(createTableTdOrTh("td", players[i].position))
-        tr.appendChild(createTableTdOrTh("td", players[i].team))
+        tr.appendChild(createTableTdOrTh("th", data.rows[i].name))
+        tr.appendChild(createTableTdOrTh("td", data.rows[i].jersey))
+        tr.appendChild(createTableTdOrTh("td", data.rows[i].position))
+        tr.appendChild(createTableTdOrTh("td", data.rows[i].team))
 
         let td = document.createElement("td")
         let btn = document.createElement("button")
         let btnDelete = document.createElement("button")
         btnDelete.textContent = "DELETE"
         btn.textContent = "EDIT"
-        btn.dataset.stefansplayerid = players[i].id
+        btn.dataset.stefansplayerid = data.rows[i].id
 
         td.appendChild(btnDelete)
         td.appendChild(btn)
@@ -191,18 +189,18 @@ const updateTable = async function () {
 
 
         btn.addEventListener("click", function () {
-            playerName.value = players[i].name
-            jersey.value = players[i].jersey
-            position.value = players[i].position
-            team.value = players[i].team
-            editingPlayer = players[i]
+            playerName.value = data.rows[i].name
+            jersey.value = data.rows[i].jersey
+            position.value = data.rows[i].position
+            team.value = data.rows[i].team
+            editingPlayer = data.rows[i]
             MicroModal.show('modal-1');
 
         })
 
         btnDelete.addEventListener("click", async function () {
-            if (confirm("Are you sure you want to delete " + players[i].name + "?")) {
-                await fetch("http://localhost:3000/deletePlayer/" + players[i].id, {
+            if (confirm("Are you sure you want to delete " + data.rows[i].name + "?")) {
+                await fetch("http://localhost:3000/deletePlayer/" + data.rows[i].id, {
                     method: "DELETE"
                 })
                 window.location.reload();
@@ -229,8 +227,7 @@ const updateTable = async function () {
 
 
 
-
-updateTable()
+await updateTable()
 
 
 
