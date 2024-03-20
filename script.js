@@ -3,7 +3,7 @@ const searchPlayer = document.getElementById("searchPlayer")
 const btnAdd = document.getElementById("btnAdd")
 const closeDialog = document.getElementById("closeDialog")
 const pager = document.getElementById('pager')
-const validator = require('validator');
+
 let currentQ = ""
 let currentSortCol = "name"
 let currentSortOrder = ""
@@ -68,13 +68,36 @@ closeDialog.addEventListener("click", async (ev) => {
         "team": team.value
     }
 
+
+    // Rest of the code...
+    //validator.isString(o.name);
+
     if (editingPlayer != null) {
         o.id = editingPlayer.id;
         url = "http://localhost:3000/updatePlayer/" + o.id
         method = "PUT"
     } else {
-        url = "http://localhost:3000/createPlayer"
-        method = "POST"
+        switch (true) {
+            case validator.isEmpty(o.name):
+                alert("The name cannot be empty!");
+                break;
+            case validator.isEmpty(o.jersey) && !validator.isNumeric(o.jersey):
+                alert("The jersey cannot be empty or a string!");
+                break;
+            case validator.isEmpty(o.position):
+                alert("The position cannot be empty!");
+                break;
+            case validator.isEmpty(o.team):
+                alert("The team cannot be empty!");
+                break;
+            
+            default:
+                url = "http://localhost:3000/createPlayer"
+                method = "POST"
+                break;
+        }
+        
+    
     }
     let response = await fetch(url, {
         headers: {
