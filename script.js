@@ -37,6 +37,7 @@ function Player(id, name, jersey, team, position) {
 
 searchPlayer.addEventListener("input", function () {
     setTimeout(() => {
+        currentPageNo = 1
         currentQ = searchPlayer.value.toLowerCase()
         updateTable()
     }, 1000);
@@ -117,9 +118,9 @@ btnAdd.addEventListener("click", () => {
     MicroModal.show('modal-1');
 
 })
-let offset = (currentPageNo - 1) * currentPageSize
+
 async function fetchPlayers() {
-   
+    let offset = (currentPageNo - 1) * currentPageSize
     return ((await fetch('http://localhost:3000/getPlayers?' 
     + '&sortCol=' + currentSortCol 
     + '&sortOrder=' + currentSortOrder 
@@ -144,7 +145,6 @@ function createPager(count, pageNo, currentPageSize) {
         a.classList.add("page-link")
         li.appendChild(a)
         a.addEventListener("click", () => {
-
             currentPageNo = i
             updateTable()
         })
@@ -159,7 +159,10 @@ const updateTable = async function () {
     //     allPlayersTBody.firstChild.remove()
     allPlayersTBody.innerHTML = ""
     // först ta bort alla children
-    for (let i = 0; i < currentPageSize; i++) { // hrmmm you do foreach if you'd like, much nicer! 
+    let antal = data.rows.length;
+    //if(data.count < currentPageSize) {antal = data.count}
+
+    for (let i = 0; i < antal; i++) { // hrmmm you do foreach if you'd like, much nicer! 
         let tr = document.createElement("tr")
 
         tr.appendChild(createTableTdOrTh("th", data.rows[i].name))
