@@ -1,5 +1,3 @@
-
-
 const allPlayersTBody = document.querySelector("#allPlayers tbody")
 const searchPlayer = document.getElementById("searchPlayer")
 const btnAdd = document.getElementById("btnAdd")
