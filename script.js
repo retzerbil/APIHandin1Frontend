@@ -68,10 +68,6 @@ closeDialog.addEventListener("click", async (ev) => {
         "team": team.value
     }
 
-
-    // Rest of the code...
-    //validator.isString(o.name);
-
     if (editingPlayer != null) {
         o.id = editingPlayer.id;
         url = "http://localhost:3000/updatePlayer/" + o.id
